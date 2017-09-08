@@ -1,0 +1,151 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+var totalSeconds = 0;
+var colourCount=[0,0,0,0,0];
+var currentColour="";
+var points=0;
+var userName="";
+function start(){
+	document.getElementById("start").style.visibility="hidden";
+	var timerVar = setInterval(timer, 1000);
+	var count=0;
+	for(var i=0; i<8; i++){
+		for(var j=0; j<2; j++){
+			var cell = document.createElement("div");
+			cell.setAttribute("onclick","clickCell(this);");
+				if(i==0){
+					cleft="0px";
+				}
+				else{
+				cleft=(i*40)+"px"
+				}
+				if(j==0){
+					ctop="150px";
+				}
+				else{
+					ctop=(150+(j*40))+"px";
+				}
+				cell.id="cell"+count;
+				cell.style.width = "40px";
+				cell.style.height = "40px";
+				cell.style.background = randomColour();
+				cell.style.border = "1px solid black";
+				cell.style.position = "absolute";
+				cell.style.left = cleft;
+				cell.style.top = ctop;
+				document.getElementById("grid").appendChild(cell);
+				count++;
+				}
+	}
+	checkColours();
+	currentColour=randomColour();
+	document.getElementById("colour").value=currentColour;
+}
+function timer() {
+	if(totalSeconds==60){
+		alert("Game Over! You scored "+points);
+		$('#all').fadeOut(5000, function(){ 
+			$(this).hide();
+		});
+	}
+   ++totalSeconds;
+   var hour = Math.floor(totalSeconds /3600);
+   var minute = Math.floor((totalSeconds - hour*3600)/60);
+   var seconds = totalSeconds - (hour*3600 + minute*60);
+   document.getElementById("timer").innerHTML = "Timer="+seconds;
+}
+
+function randomColour(){
+	while(true){
+		x= Math.floor((Math.random() * 5) + 0);
+		if(x==0){
+			colourCount[0]++;
+			return "blue";
+		}
+		if(x==1){
+			colourCount[1]++;
+			return "red";
+		}
+		if(x==2){
+			colourCount[2]++;
+			return "green";
+		}
+		if(x==3){
+			colourCount[3]++;
+			return "orange";
+		}
+		if(x==4){
+			colourCount[4]++;
+			return "gray";
+		}
+	}
+}
+function checkColours(){
+	x= Math.floor((Math.random() * 16) + 0);
+	var cell=document.getElementById("cell"+x);
+	if(colourCount[0]==0){
+		cell.style.background = "blue";
+	}
+	if(colourCount[1]==0){
+		cell.style.background = "red";
+	}
+	if(colourCount[2]==0){
+		cell.style.background = "green";
+	}
+	if(colourCount[3]==0){
+		cell.style.background = "orange";
+	}
+	if(colourCount[4]==0){
+		cell.style.background = "gray";
+	}
+}
+
+function clickCell(cell){
+	if(cell.style.background==currentColour){
+		points++;
+		document.getElementById("point").innerHTML = "Points="+points;
+		pickedCell="";
+		removeBorder();
+		check=true;
+		while(check){
+			currentColour=randomColour();
+			if(cell.style.background != currentColour){
+				check=false;
+				document.getElementById("colour").value=currentColour;
+			}
+		}
+	}
+	
+}
+function findColours(){
+	for(var i=0; i<16; i++){
+		var cell=document.getElementById("cell"+i);
+		if(cell.style.background ==currentColour){
+			cell.style.border = "2px solid yellow";
+		}
+	}
+}
+function removeBorder(){
+	for(var i=0; i<16; i++){
+		var cell=document.getElementById("cell"+i);
+		if(cell.style.background ==currentColour){
+			cell.style.border = "1px solid black";
+		}
+	}
+}
+</script>
+</head>
+<body>
+	<input type="button" id="start" value="Start" 	onclick="start()" style="visibility:visible;">
+	<br>
+	<div id="all">
+		<p id=timer>Timer=0</p>
+		<p id=point>points=0</p>
+		<input type="button" id="colour" value="Colour" onclick="findColours()" style="visibility:visible;">
+		<div id ="grid">
+		</div>
+	<div>
+</body>
+</html>
